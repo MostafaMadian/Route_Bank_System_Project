@@ -235,6 +235,30 @@ C++-Source/Route_Bank.sln
 
 ---
 
+## 🖥️ Application Screenshots
+
+### Bank Introduction
+
+![Bank Introduction](screenshots/Bank_Intro.png)
+
+### Login Menu
+
+![Login Menu](screenshots/Login_Menu.png)
+
+### Client Menu
+
+![Client Menu](screenshots/Client_Menu.png)
+
+### Employee Menu
+
+![Employee Menu](screenshots/Employee_Menu.png)
+
+### Admin Menu
+
+![Admin Menu](screenshots/Admin_Menu.png)
+
+---
+
 ## 🌐 Live Demo vs. Original C++ Project
 
 The **Live Demo** provides a browser-friendly representation of the main banking workflows.

@@ -1,0 +1,261 @@
+class Validation
+{
+public:
+	//Name Validation
+	static bool validName(string name) {
+		/*if (name.size() < 5 || name.size() > 20) {
+			return false;
+		}
+		else if (name.size() >= 5 && name.size() <= 20) {
+			for (int i = 0; i < name.size(); i++)
+			{
+				if (!isalpha(name[i]) || name[i] == ' ') {
+					return false;
+				}
+			}
+			return true;
+		}*/
+
+		//OR
+		if (!(name.size() >= 5 && name.size() <= 20)) {
+			return false;
+		}
+		else {
+			for (int i = 0; i < name.size(); i++)
+			{
+				if (!isalpha(name[i])) {
+					return false;
+				}
+
+				//OR
+				/*if (!((name[i] >= 'a' && name[i] <= 'z') || 
+					(name[i] >= 'A' && name[i] <= 'Z'))) {
+					return false;
+				}*/
+			}
+			return true;
+		}
+	}
+
+	//Password Validation
+	static bool validPassword(string password) {
+		if (!(password.size() >= 8 && password.size() <= 20)) {
+			return false;
+		}
+		else {
+			for (int i = 0; i < password.size(); i++)
+			{
+				if (password[i] == ' ') { //May use -> Password[i] = ' '
+					return false;
+				}
+				return true;
+			}
+		
+		}
+	}
+
+
+	//Balance Validation
+	static bool validBalance(double balance) {
+		if (balance < 1500) { // OR return balance >= 1500;
+			return false;
+		}
+		return true;
+	}
+
+	//Salary VAlidation 
+	static bool validSalary(double salary) {
+		if (salary < 5000) { // OR return salary >= 1500;
+			return false;
+		}
+		return true;
+	}
+};
+
+
+
+=====================================================================================
+
+
+Person::Person() : id(0) {};
+
+Person::Person(int id, string name, string password) : id(id) {
+
+	if (Validation::validName(name)) {
+		this->name = name;
+	}
+	else {
+		this->name = "This Name Is Not Valid";
+		//cout << "\nThis Name Is Not Valid\n";
+	}
+
+	if (Validation::validPassword(password)) {
+		this->password = password;
+	}
+	else {
+		this->password = "This Password Is Not Valid";
+		cout << "\nThis Password Is Not Valid\n";
+	}
+
+};
+
+//Setters
+void Person::setName(string name) {
+	if (Validation::validName(name)) {
+		this->name = name;
+	}
+	else {
+		this->name = "This Name Is Not Valid";
+		//cout << "\nThis Name Is Not Valid\n";
+	}
+}
+void Person::setPassword(string password) {
+	if (Validation::validPassword(password)) {
+		this->password = password;
+	}
+	else {
+		this->password = "This Password Is Not Valid";
+		cout << "\nThis Password Is Not Valid\n";
+	}
+}
+void Person::setID(int id) {
+	this->id = id;
+}
+//Getters
+string Person::getName() {
+	return name;
+}
+string Person::getPassword() {
+	return password;
+}
+int Person::getID() {
+	return id;
+}
+
+==================================================================================
+
+class Client : public Person
+{
+private:
+	double balance;
+public:
+	//Default Constructor
+	Client() :balance(0) {};
+	//Paramitrized Constructor
+	Client(int id, string name, string password, double balance) :
+		Person(id, name, password){
+		if (Validation::validBalance(balance)) {
+			this->balance = balance;
+		}
+		else {
+			this->balance = 0;
+		cout << "\nBalance Should be Greater Than 1500\n";
+		}
+	};
+	//setters
+	void setBalance(double balance) {
+		
+			if (Validation::validBalance(balance)) {
+				this->balance = balance;
+			}
+			else {
+				this->balance = 0;
+				cout << "\nBalance Should be Greater Than 1500\n";
+			}
+	}
+	double getBalance() {
+		return balance;
+	}
+	void deposit(double amount) {
+		if (amount > 0) {
+			balance += amount;
+		}
+		else {
+			cout << "\nAmount Must be greater than Zero\n";
+		}
+	}
+	void withdraw(double amount) {
+		if (amount > 0 && amount <= balance) {
+			balance -= amount;
+		}
+		else {
+			cout << "\nAmount Must be lower than Balance\n";
+		}
+	}
+	void tranfertToAnother(Client& client , double amount) {
+		if (amount > 0 && amount <= balance) {
+			balance -= amount;
+			client.deposit(amount);
+		}
+		else {
+			cout << "\nAmount Must be lower than Balance\n";
+		}
+	}
+	void displayInfo() {
+		cout <<"\nClient Info\n==========="<< endl
+			<< "ID : " << id << endl
+			<< "Name : " << name << endl
+			<< "Balance : " << balance << endl;
+	
+	}
+
+};
+
+===============================================================================
+
+class Employee : public Person
+{
+protected:
+	double salary;
+public:
+	Employee() :salary(0) {};
+	Employee(int id, string name, string password, double salary) :
+		Person(id, name, password) {
+		if (Validation::validSalary(salary)) {
+			this->salary = salary;
+		}
+		else {
+			this->salary = 0;
+			cout << "\nSalary Should be Greater Than 5000\n";
+		}
+	}
+
+	void setSalary(double salary) {
+		if (Validation::validSalary(salary)) {
+			this->salary = salary;
+		}
+		else {
+			this->salary = 0;
+			cout << "\nSalary Should be Greater Than 5000\n";
+		}
+	}
+
+	double getSalary() {
+		return salary;
+	}
+	void displayInfo() {
+		cout <<"\nEmployee Info\n============="<<endl
+			<< "ID : " << id << endl
+			<< "Name : " << name << endl
+			<< "Salary : " << salary << endl;
+
+	}
+};
+
+=============================================================================
+
+class Admin : public Employee
+{
+public:
+	Admin() {};
+	Admin(int id, string name, string password, double salary) :
+		Employee(id, name, password, salary) {};
+
+	void displayInfo() {
+		cout <<"\nAdmin Info\n=========="<<endl
+			<< "ID : " << id << endl
+			<< "Name : " << name << endl
+			<< "Salary : " << salary << endl;
+	}
+
+};

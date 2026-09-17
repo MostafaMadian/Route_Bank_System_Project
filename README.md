@@ -6,7 +6,7 @@ A console-based banking system built with C++ using Object-Oriented Programming,
 
 ## 🚀 Live Demo
 
-**[Try the Live Demo](./index.html)**
+**[🚀 Try the Live Demo](https://MostafaMadian.github.io/Route_Bank_System_Project/)**
 
 > The Live Demo is a browser-based representation of the main banking workflows.
 > The original course project is implemented as a C++ console application.

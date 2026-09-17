@@ -309,4 +309,4 @@ Students can explore both:
 
 ## 📄 License
 
-This project is provided for educational purposes as part of the course.
+This project is provided for educational purposes as part of the Route Academy computer science course.

@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+<link rel="icon" type="image/png" href="route-favicon.png">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Route Bank — C++ Project Live Demo</title>
@@ -13,7 +14,8 @@ h1{margin:0;font-size:25px}.badge{padding:6px 10px;border:1px solid #334155;bord
 .output{min-height:510px;max-height:64vh;overflow:auto;padding:25px;white-space:pre-wrap;line-height:1.55;font-size:15px}
 .inputrow{display:flex;border-top:1px solid #1e293b;padding:13px 18px}.prompt{color:#22c55e;margin-right:9px}.inputrow input{flex:1;background:transparent;border:0;outline:0;color:#f8fafc;font:inherit}
 .actions{display:flex;gap:10px;margin-top:14px}.btn{cursor:pointer;border:1px solid #334155;background:#111827;color:#e5e7eb;border-radius:7px;padding:9px 13px;font-family:inherit}.btn:hover{background:#1e293b}
-.hint{color:#94a3b8;font:13px system-ui,sans-serif;margin-top:12px}.error{color:#fca5a5}.ok{color:#86efac}.muted{color:#94a3b8}
+.hint{color:#94a3b8;font:13px system-ui,sans-serif;margin-top:12px}
+.credentials{margin-top:16px;background:#020617;border:1px solid #334155;border-radius:12px;padding:16px}.credentials-title{font:600 14px system-ui,sans-serif;margin-bottom:12px;color:#e5e7eb}.credentials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.credentials-grid>div{background:#0b1220;border:1px solid #1e293b;border-radius:9px;padding:11px;font:12px system-ui,sans-serif}.credentials-grid strong{display:block;margin-bottom:7px}.credentials-grid span{display:block;color:#94a3b8;margin-top:3px}.credentials-grid code{color:#e5e7eb;font-family:Consolas,Monaco,monospace}.error{color:#fca5a5}.ok{color:#86efac}.muted{color:#94a3b8}
 </style>
 </head>
 <body>
@@ -25,6 +27,16 @@ h1{margin:0;font-size:25px}.badge{padding:6px 10px;border:1px solid #334155;bord
     <form id="form" class="inputrow"><span class="prompt">&gt;</span><input id="input" autocomplete="off" autofocus aria-label="Terminal input"></form>
   </div>
   <div class="actions"><button class="btn" id="reset">Reset demo data</button><button class="btn" id="clear">Clear screen</button></div>
+
+  <div class="credentials">
+    <div class="credentials-title">🔑 Demo Credentials</div>
+    <div class="credentials-grid">
+      <div><strong>Admin</strong><span>ID: <code>1</code></span><span>Password: <code>Admin1234</code></span></div>
+      <div><strong>Employee</strong><span>ID: <code>1</code></span><span>Password: <code>Employee123</code></span></div>
+      <div><strong>Client</strong><span>ID: <code>1</code></span><span>Password: <code>Client1234</code></span></div>
+    </div>
+  </div>
+
   <div class="hint">Demo data is stored only in this browser using localStorage. It is not a real banking system.</div>
 </div>
 <script>

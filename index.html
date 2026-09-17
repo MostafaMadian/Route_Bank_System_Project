@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Route Bank — C++ Project Live Demo</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0b1220;color:#e5e7eb;font-family:Consolas,Monaco,monospace}
+.app{max-width:1050px;margin:30px auto;padding:20px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+h1{margin:0;font-size:25px}.badge{padding:6px 10px;border:1px solid #334155;border-radius:7px;font-size:12px}
+.terminal{background:#020617;border:1px solid #334155;border-radius:12px;box-shadow:0 18px 60px #0008;overflow:hidden}
+.bar{height:38px;background:#111827;display:flex;align-items:center;padding:0 13px;gap:7px}.dot{width:11px;height:11px;border-radius:50%;background:#475569}.title{margin-left:8px;color:#94a3b8;font-size:12px}
+.output{min-height:510px;max-height:64vh;overflow:auto;padding:25px;white-space:pre-wrap;line-height:1.55;font-size:15px}
+.inputrow{display:flex;border-top:1px solid #1e293b;padding:13px 18px}.prompt{color:#22c55e;margin-right:9px}.inputrow input{flex:1;background:transparent;border:0;outline:0;color:#f8fafc;font:inherit}
+.actions{display:flex;gap:10px;margin-top:14px}.btn{cursor:pointer;border:1px solid #334155;background:#111827;color:#e5e7eb;border-radius:7px;padding:9px 13px;font-family:inherit}.btn:hover{background:#1e293b}
+.hint{color:#94a3b8;font:13px system-ui,sans-serif;margin-top:12px}.error{color:#fca5a5}.ok{color:#86efac}.muted{color:#94a3b8}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top"><h1>Route Bank — Live Demo</h1><span class="badge">Browser demo of the C++ project</span></div>
+  <div class="terminal">
+    <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="title">Route Bank System</span></div>
+    <div id="out" class="output"></div>
+    <form id="form" class="inputrow"><span class="prompt">&gt;</span><input id="input" autocomplete="off" autofocus aria-label="Terminal input"></form>
+  </div>
+  <div class="actions"><button class="btn" id="reset">Reset demo data</button><button class="btn" id="clear">Clear screen</button></div>
+  <div class="hint">Demo data is stored only in this browser using localStorage. It is not a real banking system.</div>
+</div>
+<script>
+const initial={
+ admins:[{id:1,name:"Demo Admin",password:"Admin1234",salary:50000}],
+ employees:[
+  {id:1,name:"Demo Employee",password:"Employee123",salary:7000},
+  {id:2,name:"Senior Employee",password:"Senior1234",salary:12000}
+ ],
+ clients:[
+  {id:1,name:"Mo Adel",password:"Client1234",balance:5000},
+  {id:2,name:"Maged Naguib",password:"Maged1234",balance:9000},
+  {id:3,name:"Salma Mahmoud",password:"Salma1234",balance:1500}
+ ]
+};
+let data=JSON.parse(localStorage.getItem("routeBankDemo")||"null")||structuredClone(initial);
+function save(){localStorage.setItem("routeBankDemo",JSON.stringify(data))}
+const out=document.getElementById("out"), inp=document.getElementById("input"), form=document.getElementById("form");
+let state={screen:"role",role:null,user:null,step:null,ctx:null};
+function print(s="",cls=""){const d=document.createElement("div");d.textContent=s;if(cls)d.className=cls;out.appendChild(d);out.scrollTop=out.scrollHeight}
+function clear(){out.innerHTML=""}
+function ask(prompt,step){print("\n"+prompt);state.step=step;inp.value="";inp.focus()}
+function find(role,id){return data[role+"s"].find(x=>x.id===Number(id))}
+function money(n){return Number(n).toLocaleString("en-US",{maximumFractionDigits:2})}
+function menu(){
+ clear();
+ if(state.role==="client"){print("CLIENT MENU\n===========\n(1) Check Balance\n(2) Withdraw\n(3) Deposit\n(4) Transfer Amount\n(5) Edit Password\n(6) Display Information\n(7) Back to Client Menu\n(8) Logout\n(9) Logout & End Program")}
+ else if(state.role==="employee"){print("EMPLOYEE MENU\n=============\n(1) Display Information\n(2) Check Salary\n(3) Edit Password\n(4) Add New Client\n(5) List All Clients\n(6) Search for a Client\n(7) Edit Client Information\n(8) Back to Employee Menu\n(9) Logout\n(10) Logout & End Program")}
+ else if(state.role==="admin"){print("ADMIN MENU\n==========\n(1) Display Information\n(2) Check Salary\n(3) Edit Password\n(4) Add New Employee\n(5) Add New Client\n(6) List All Employees\n(7) List All Clients\n(8) Search for an Employee\n(9) Search for a Client\n(10) Edit Employee Information\n(11) Edit Client Information\n(12) Back to Admin Menu\n(13) Logout\n(14) Logout & End Program")}
+ ask("Please Choose an Option...","menu");
+}
+function start(){clear();print("        ROUTE BANK");print("==========================");print("Welcome to Route Bank!");print("\n(1) Admin\n(2) Employee\n(3) Client");ask("Login as :","role")}
+function loginPrompt(){ask("Please Enter Your ID :","id")}
+function loginPassword(){ask("Please Enter Your Password :","password")}
+function displayInfo(u,role){print(`\n${role.toUpperCase()} INFO\n${"=".repeat(role.length+5)}\nID : ${u.id}\nName : ${u.name}\n${role==="client"?"Balance":"Salary"} : ${money(role==="client"?u.balance:u.salary)}`)}
+function listClients(){data.clients.forEach(c=>displayInfo(c,"client"))}
+function listEmployees(){data.employees.forEach(e=>displayInfo(e,"employee"))}
+function handle(v){
+ v=v.trim();
+ if(state.step==="role"){
+  const r={1:"admin",2:"employee",3:"client"}[v]; if(!r){print("Invalid option.","error");return}
+  state.role=r; loginPrompt(); return;
+ }
+ if(state.step==="id"){if(!/^\d+$/.test(v)){print("Invalid ID.","error");return}state.ctx={id:Number(v)};loginPassword();return}
+ if(state.step==="password"){
+  const arr=data[state.role+"s"],u=arr.find(x=>x.id===state.ctx.id&&x.password===v);
+  if(!u){print("Invalid ID or Password.","error");ask("Please Enter Your ID :","id");return}
+  state.user=u;print(`\nLogin successful. Welcome, ${u.name}.`,"ok");menu();return;
+ }
+ if(state.step==="menu"){return menuAction(Number(v))}
+ if(state.step==="amount"){let n=Number(v);if(!Number.isFinite(n)||n<=0){print("Amount must be greater than zero.","error");return}return amountAction(n)}
+ if(state.step==="recipient"){let id=Number(v);if(!data.clients.some(c=>c.id===id)){print("Client is not found.","error");return}state.ctx.recipient=id;ask("Please Enter the Amount...","amount");return}
+ if(state.step==="newClientName"){state.ctx.name=v;ask("Please Enter Client Password...","newClientPassword");return}
+ if(state.step==="newClientPassword"){if(v.length<8||v.length>25||/\s/.test(v)){print("Password must be 8–25 characters without spaces.","error");return}state.ctx.password=v;ask("Please Enter Client Balance...","newClientBalance");return}
+ if(state.step==="newClientBalance"){let n=Number(v);if(n<1500){print("Minimum balance is 1500 L.E.","error");return}let id=Math.max(0,...data.clients.map(x=>x.id))+1;data.clients.push({id,name:state.ctx.name,password:state.ctx.password,balance:n});save();print(`Client is Added Successfully. ID : ${id}`,"ok");menu();return}
+ if(state.step==="newEmployeeName"){state.ctx.name=v;ask("Please Enter Employee Password...","newEmployeePassword");return}
+ if(state.step==="newEmployeePassword"){if(v.length<8||v.length>25||/\s/.test(v)){print("Password must be 8–25 characters without spaces.","error");return}state.ctx.password=v;ask("Please Enter Employee Salary...","newEmployeeSalary");return}
+ if(state.step==="newEmployeeSalary"){let n=Number(v);if(n<5000){print("Minimum salary is 5000 L.E.","error");return}let id=Math.max(0,...data.employees.map(x=>x.id))+1;data.employees.push({id,name:state.ctx.name,password:state.ctx.password,salary:n});save();print(`Employee is Added Successfully. ID : ${id}`,"ok");menu();return}
+ if(state.step==="newPassword"){if(v.length<8||v.length>25||/\s/.test(v)){print("Password must be 8–25 characters without spaces.","error");return}state.user.password=v;save();print("Password Is Edited Successfully!","ok");menu();return}
+ if(state.step==="searchClient"){let c=find("client",v);if(!c)print("Client is not Found","error");else displayInfo(c,"client");menu();return}
+ if(state.step==="searchEmployee"){let e=find("employee",v);if(!e)print("Employee is not Found","error");else displayInfo(e,"employee");menu();return}
+ if(state.step==="editClient"){let c=find("client",v);if(!c){print("Client is not Found","error");menu();return}state.ctx.target=c;ask("Please Enter New Password...","editTargetPassword");return}
+ if(state.step==="editTargetPassword"){if(v.length<8||v.length>25||/\s/.test(v)){print("Password must be 8–25 characters without spaces.","error");return}state.ctx.target.password=v;save();print("Client Information is Edited Successfully","ok");menu();return}
+ if(state.step==="editEmployee"){let e=find("employee",v);if(!e){print("Employee is not Found","error");menu();return}state.ctx.target=e;ask("Please Enter New Password...","editEmployeePassword");return}
+ if(state.step==="editEmployeePassword"){if(v.length<8||v.length>25||/\s/.test(v)){print("Password must be 8–25 characters without spaces.","error");return}state.ctx.target.password=v;ask("Please Enter New Salary...","editEmployeeSalary");return}
+ if(state.step==="editEmployeeSalary"){let n=Number(v);if(n<5000){print("Minimum salary is 5000 L.E.","error");return}state.ctx.target.salary=n;save();print("Employee Information is Edited Successfully","ok");menu();return}
+ if(state.step==="flag"){if(v.toLowerCase()==="y")menu();else logout();return}
+}
+function menuAction(o){
+ if(state.role==="client"){
+  if(o===1)print(`\nYour Balance is : ${money(state.user.balance)} L.E.`);
+  else if(o===2){ask("Please Enter the Amount...","amount");state.ctx.action="withdraw";return}
+  else if(o===3){ask("Please Enter the Amount...","amount");state.ctx.action="deposit";return}
+  else if(o===4){ask("Please Enter the Recipient ID","recipient");return}
+  else if(o===5){ask("Please Enter Your New Password...","newPassword");return}
+  else if(o===6)displayInfo(state.user,"client");
+  else if(o===8||o===9){logout();return}
+  else {print("Invalid option.","error");return}
+ } else if(state.role==="employee"){
+  if(o===1)displayInfo(state.user,"employee");
+  else if(o===2)print(`\nYour Salary is : ${money(state.user.salary)} L.E.`);
+  else if(o===3){ask("Please Enter Your New Password...","newPassword");return}
+  else if(o===4){ask("Please Enter Client Name...","newClientName");return}
+  else if(o===5)listClients();
+  else if(o===6){ask("Please Enter Client ID","searchClient");return}
+  else if(o===7){ask("Please Enter Client ID","editClient");return}
+  else if(o===9||o===10){logout();return}
+  else {print("Invalid option.","error");return}
+ } else {
+  if(o===1)displayInfo(state.user,"admin");
+  else if(o===2)print(`\nYour Salary is : ${money(state.user.salary)} L.E.`);
+  else if(o===3){ask("Please Enter Your New Password...","newPassword");return}
+  else if(o===4){ask("Please Enter Employee Name...","newEmployeeName");return}
+  else if(o===5){ask("Please Enter Client Name...","newClientName");return}
+  else if(o===6)listEmployees();
+  else if(o===7)listClients();
+  else if(o===8){ask("Please Enter Employee ID","searchEmployee");return}
+  else if(o===9){ask("Please Enter Client ID","searchClient");return}
+  else if(o===10){ask("Please Enter Employee ID","editEmployee");return}
+  else if(o===11){ask("Please Enter Client ID","editClient");return}
+  else if(o===13||o===14){logout();return}
+  else {print("Invalid option.","error");return}
+ }
+ save();ask("Do you Want Another Operation?(Y/N)","flag");
+}
+function amountAction(n){
+ const a=state.ctx.action;
+ if(a==="withdraw"){
+  if(n>state.user.balance){print("Amount must be lower than or equal to balance.","error");return}
+  state.user.balance-=n;save();print(`Withdraw successful. New Balance : ${money(state.user.balance)} L.E.`,"ok");
+ }else if(a==="deposit"){state.user.balance+=n;save();print(`Deposit successful. New Balance : ${money(state.user.balance)} L.E.`,"ok")}
+ else if(a==="transfer"){
+  let r=find("client",state.ctx.recipient);
+  if(n>state.user.balance){print("Amount must be lower than or equal to balance.","error");return}
+  state.user.balance-=n;r.balance+=n;save();print(`Transfer successful to Client #${r.id}. New Balance : ${money(state.user.balance)} L.E.`,"ok");
+ }
+ menu();
+}
+function logout(){state={screen:"role",role:null,user:null,step:null,ctx:null};start()}
+form.addEventListener("submit",e=>{e.preventDefault();let v=inp.value;print("> "+v);handle(v)});
+document.getElementById("reset").onclick=()=>{data=structuredClone(initial);save();logout()};
+document.getElementById("clear").onclick=()=>{clear();menu()};
+start();
+</script>
+</body>
+</html>
